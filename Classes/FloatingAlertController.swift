@@ -7,18 +7,18 @@
 
 import UIKit
 
-protocol FloatingCellDelegate: FloatingCellDateSource {
+public protocol FloatingCellDelegate: FloatingCellDateSource {
     func didSelect()
 }
 
-protocol FloatingCellDateSource {
+public protocol FloatingCellDateSource {
     func setTitle(icon: UIImage?, title: String)
     func setFontTitle(font: UIFont)
     func setAction(action: Any)
+    func hideArrow()
 }
 
-extension FloatingCellDateSource {
-    func hideArrow(){}
+public extension FloatingCellDateSource {
     func switchState(state: Bool){}
 }
 
@@ -34,27 +34,35 @@ public class FloatingAlertController: UIViewController {
     @IBOutlet weak var floatingView: UIView!
     @IBOutlet weak var tableView: SelfSizedTableView!
     @IBOutlet weak var handleArea: UIView!
-    var floatingAlert = [FloatingAlertAction]()
+    public var floatingAlert = [FloatingAlertAction]()
 
     private var cardHeight: CGFloat?
     private var cardOpenPosition: CGFloat?
 
-    var backgroundColor = UIColor.white
-    var cornerRadius: CGFloat = 10
-    var textFont = UIFont.systemFont(ofSize: 10)
+    public var backgroundColor = UIColor.white
+    public var cornerRadius: CGFloat = 10
+    public var textFont = UIFont.systemFont(ofSize: 17)
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         registerCell()
         setProperty()
         floatingView.isHidden = true
         setupCard()
     }
-
+    
+    convenience init() {
+        let bundle = Bundle(for: type(of: self))
+        self.init(nibName: "FloatingAlertController", bundle: bundle)
+        self.modalPresentationStyle = .overCurrentContext
+    }
     func registerCell() {
-        tableView.register(UINib(nibName: "FloatingAlertCell", bundle: nil), forCellReuseIdentifier: "floatingAlertCell")
-        tableView.register(UINib(nibName: "FloatingSeparatorCell", bundle: nil), forCellReuseIdentifier: "floatingSeparatorCell")
-        tableView.register(UINib(nibName: "FloatingSwitchCell", bundle: nil), forCellReuseIdentifier: "floatingSwitchCell")
+        let bundle = Bundle(for: type(of: self))
+        tableView.register(UINib(nibName: "FloatingAlertCell", bundle: bundle), forCellReuseIdentifier: "floatingAlertCell")
+        tableView.register(UINib(nibName: "FloatingSeparatorCell", bundle: bundle), forCellReuseIdentifier: "floatingSeparatorCell")
+        tableView.register(UINib(nibName: "FloatingSwitchCell", bundle: bundle), forCellReuseIdentifier: "floatingSwitchCell")
     }
 
     func setupCard() {
@@ -146,6 +154,7 @@ extension FloatingAlertController: UITableViewDataSource, UITableViewDelegate {
             cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
             cell.setTitle(icon: icon, title: title)
             cell.setAction(action: action)
+            cell.hideArrow()
         case let .actionArrow(icon: icon, title: title, action: action):
             cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
             cell.setTitle(icon: icon, title: title)

@@ -25,6 +25,7 @@
 		FA55D2C925389D9500117571 /* FloatingAlertCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA55D2C725389D9500117571 /* FloatingAlertCell.xib */; };
 		FA55D2CF25389DC800117571 /* FloatingSeparatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA55D2CD25389DC800117571 /* FloatingSeparatorCell.swift */; };
 		FA55D2D025389DC800117571 /* FloatingSeparatorCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA55D2CE25389DC800117571 /* FloatingSeparatorCell.xib */; };
+		FAF9B1332539D75C00AE1FC1 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAF9B1322539D75C00AE1FC1 /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		FA55D2C725389D9500117571 /* FloatingAlertCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FloatingAlertCell.xib; sourceTree = "<group>"; };
 		FA55D2CD25389DC800117571 /* FloatingSeparatorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSeparatorCell.swift; sourceTree = "<group>"; };
 		FA55D2CE25389DC800117571 /* FloatingSeparatorCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FloatingSeparatorCell.xib; sourceTree = "<group>"; };
+		FAF9B1322539D75C00AE1FC1 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +261,7 @@
 				FA55D2AB25389C8A00117571 /* FloatingAlertHelp.swift */,
 				FA55D2B025389CE600117571 /* FloatingAlertController.swift */,
 				FA55D2B125389CE700117571 /* FloatingAlertController.xib */,
+				FAF9B1322539D75C00AE1FC1 /* Media.xcassets */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAF9B1332539D75C00AE1FC1 /* Media.xcassets in Resources */,
 				FA55D2C925389D9500117571 /* FloatingAlertCell.xib in Resources */,
 				FA55D2B325389CE700117571 /* FloatingAlertController.xib in Resources */,
 				FA55D2C225389D4600117571 /* FloatingSwitchCell.xib in Resources */,

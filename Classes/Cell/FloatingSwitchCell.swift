@@ -8,6 +8,10 @@
 import UIKit
 
 class FloatingSwitchCell: UITableViewCell, FloatingCellDateSource {
+    func hideArrow() {
+        
+    }
+    
     var action: ((UISwitch) -> Void)?
     @IBOutlet weak var iconImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
