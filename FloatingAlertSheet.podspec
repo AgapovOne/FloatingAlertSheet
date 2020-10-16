@@ -21,16 +21,16 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/Alexander/FloatingAlertSheet'
+  s.homepage         = 'https://github.com/Single-sh/FloatingAlertSheet'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Alexander' => 'shevchenko.a.i14@gmail.com' }
-  s.source           = { :git => 'https://github.com/Alexander/FloatingAlertSheet.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/Single-sh/FloatingAlertSheet.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'FloatingAlertSheet/Classes/*.{h,m}'
+  s.source_files = 'FloatingAlertSheet/Classes/**.*'
   
   # s.resource_bundles = {
   #   'FloatingAlertSheet' => ['FloatingAlertSheet/Assets/*.png']
