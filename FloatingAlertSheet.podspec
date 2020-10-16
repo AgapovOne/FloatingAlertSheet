@@ -31,8 +31,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '11.0'
 
 #  s.resources = 'FloatingAlertSheet/**/*.{xib}'
-  s.source_files = 'FloatingAlertSheet/Classes/**/*.{h,m}'
-  
+  s.source_files = 'FloatingAlertSheet/Classes/**/*'
+
   # s.resource_bundles = {
   #   'FloatingAlertSheet' => ['FloatingAlertSheet/Assets/*.png']
   # }

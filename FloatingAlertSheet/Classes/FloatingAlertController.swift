@@ -6,35 +6,49 @@
 //
 
 import UIKit
-
-public protocol FloatingCellDelegate: FloatingCellDateSource {
-    func didSelect()
-}
-
-public protocol FloatingCellDateSource {
-    func setTitle(icon: UIImage?, title: String)
+//
+//public protocol FloatingCellDelegate: FloatingCellDataSource {
+//    func didSelect()
+//}
+//
+public protocol FloatingCellDataSource {
+//    func setTitle(icon: UIImage?, title: String)
     func setFontTitle(font: UIFont)
-    func setAction(action: Any)
-    func hideArrow()
+//    func setAction(action: Any)
+//    func hideArrow()
 }
-
-public extension FloatingCellDateSource {
-    func switchState(state: Bool){}
-}
+//
+//public protocol FloatingCellDateSourceToggle: FloatingCellDataSource {
+//    func switchState(state: Bool)
+//}
 
 public enum FloatingAlertAction {
     case title(icon: UIImage? = nil, title: String)
-    case action(icon: UIImage? = nil, title: String, action: () -> Void)
-    case actionArrow(icon: UIImage? = nil, title: String, action: () -> Void)
-    case actionSwitch(icon: UIImage? = nil, title: String, stateSwitch: Bool = false, action: (UISwitch) -> Void)
+    case action(AlertCellViewModel)
+    case actionSwitch(AlertCellViewModelToggle)
     case separator
+
+  public struct AlertCellViewModel {
+    let image: UIImage?
+    let title: String
+    let hasArrow: Bool
+    let onTap: () -> Void
+  }
+
+  public struct AlertCellViewModelToggle {
+    let title: String
+    let isDisabled: Bool
+    let isOn: Bool
+    let onToggle: (Bool) -> Void
+  }
 }
 
 public class FloatingAlertController: UIViewController {
-    @IBOutlet weak var floatingView: UIView!
-    @IBOutlet weak var tableView: SelfSizedTableView!
-    @IBOutlet weak var handleArea: UIView!
-    public var floatingAlert = [FloatingAlertAction]()
+    @IBOutlet private weak var floatingView: UIView!
+    @IBOutlet private weak var tableView: SelfSizedTableView!
+    @IBOutlet private weak var handleArea: UIView!
+
+    var actions = [FloatingAlertAction]()
 
     private var cardHeight: CGFloat?
     private var cardOpenPosition: CGFloat?
@@ -42,6 +56,25 @@ public class FloatingAlertController: UIViewController {
     public var backgroundColor = UIColor.white
     public var cornerRadius: CGFloat = 10
     public var textFont = UIFont.systemFont(ofSize: 17)
+
+//  struct Theme {
+//    public init(backgroundColor: UIColor = UIColor.white,
+//                cornerRadius: CGFloat = 10,
+//                textFont: UIFont = UIFont.systemFont(ofSize: 17)) {
+//      self.backgroundColor = backgroundColor
+//      self.cornerRadius = cornerRadius
+//      self.textFont = textFont
+//    }
+//
+//    public let backgroundColor: UIColor
+//    public let cornerRadius: CGFloat
+//    public let textFont = UIFont.systemFont(ofSize: 17)
+//  public let closesOnTap: Bool
+//  public let initialActions: [FloatingAlertAction]
+//
+//    static var `default`: Self = .init()
+//  }
+//  private let theme: Theme
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,12 +85,41 @@ public class FloatingAlertController: UIViewController {
         floatingView.isHidden = true
         setupCard()
     }
-    
+
+  public func update(with actions: [FloatingAlertAction]) {
+    self.actions = actions
+    tableView.reloadData()
+  }
+
+  public func hide() {
+    UIView.animate(withDuration: 0.3) {
+      self.floatingView.frame.origin.y = self.view.frame.height
+    } completion: { _ in
+      self.dismiss(animated: false) {
+        cell.didSelect()
+      }
+    }
+  }
+
+//  init(theme: Theme = .default) {
+//
+//  }
+
     convenience init() {
         let bundle = Bundle(for: type(of: self))
         self.init(nibName: "FloatingAlertController", bundle: bundle)
         self.modalPresentationStyle = .overCurrentContext
     }
+
+//  override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+//    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//  }
+//
+//  @available(*, unavailable)
+//  public required init?(coder: NSCoder) {
+//    fatalError("Not implemented")
+//  }
+  
     func registerCell() {
         let bundle = Bundle(for: type(of: self))
         tableView.register(UINib(nibName: "FloatingAlertCell", bundle: bundle), forCellReuseIdentifier: "floatingAlertCell")
@@ -71,15 +133,15 @@ public class FloatingAlertController: UIViewController {
                                                           action: #selector(handleCardPan(recogniser:)))
         floatingView.addGestureRecognizer(panGestureRecognizer)
         self.view.addGestureRecognizer(panGestureRecognizer)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//      floatingView.layoutIfNeeded()
             self.openAnimate()
-        }
+//        }
     }
 
     func openAnimate() {
 
         floatingView.frame.origin.y = self.view.frame.height
-        floatingView.layoutIfNeeded()
         self.setCorner()
         floatingView.isHidden = false
         UIView.animate(withDuration: 0.3) {
@@ -138,46 +200,65 @@ public class FloatingAlertController: UIViewController {
 
 extension FloatingAlertController: UITableViewDataSource, UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        floatingAlert.count
+        actions.count
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: FloatingCellDateSource
-        switch floatingAlert[indexPath.row] {
+        switch actions[indexPath.row] {
         case .separator:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "floatingSeparatorCell")!
+          let cell = tableView.dequeueReusableCell(withIdentifier: "floatingSeparatorCell")!
             return cell
         case let .title(icon: icon, title: title):
-            cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
+          // Check AliSoftware/Reusable || R.swift
+//          let cell: FloatingAlertCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setTitle(icon: icon, title: title)
             cell.hideArrow()
+          cell.setFontTitle(font: textFont)
+          return cell as! UITableViewCell
         case let .action(icon: icon, title: title, action: action):
-            cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
+          let cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
             cell.setTitle(icon: icon, title: title)
             cell.setAction(action: action)
             cell.hideArrow()
+          cell.setFontTitle(font: textFont)
+          return cell as! UITableViewCell
         case let .actionArrow(icon: icon, title: title, action: action):
-            cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
+          let cell = tableView.dequeueReusableCell(withIdentifier: "floatingAlertCell") as! FloatingAlertCell
+          cell.
+//          cell.configure(with: actions[indexPath.row])
+          return cell
+
             cell.setTitle(icon: icon, title: title)
             cell.setAction(action: action)
+          cell.setFontTitle(font: textFont)
+//          cell.setFontTitle(font: configuration.textFont)
+          return cell as! UITableViewCell
         case let .actionSwitch(icon: icon, title: title, stateSwitch: state, action: action):
-            cell = tableView.dequeueReusableCell(withIdentifier: "floatingSwitchCell") as! FloatingSwitchCell
+          let   cell = tableView.dequeueReusableCell(withIdentifier: "floatingSwitchCell") as! FloatingSwitchCell
             cell.setTitle(icon: icon, title: title)
             cell.switchState(state: state)
             cell.setAction(action: action)
+          cell.setFontTitle(font: textFont)
+          return cell as! UITableViewCell
         }
         cell.setFontTitle(font: textFont)
         return cell as! UITableViewCell
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) as? FloatingCellDelegate {
-            UIView.animate(withDuration: 0.3) {
-                self.floatingView.frame.origin.y = self.view.frame.height
-            } completion: { _ in
-                self.dismiss(animated: false) {
-                    cell.didSelect()
-                }
-            }
-        }
+
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      let action = actions[indexPath.row]
+      switch action {
+      case let .tap(viewModel):
+        viewModel.onTap()
+      }
+//      case let .action(_, _, action):
+//        action()
+
+//      case let .actionSwitch(_, _, _, action):
+//        action
+//      case .separator, .title: break
+      if theme.closesOnTap {
+        hide()
+      }
     }
 }
